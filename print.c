@@ -1,21 +1,22 @@
 #include "main.h"
 void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - produces output according to a format
- * @format: the format.
- * Return: the number of characters printed
+ * _printf -  produces output according to a format
+ * @format: the format
+ * Return:  the number of characters printed
  */
 int _printf(const char *format, ...)
 {
-int j, num = 0, num_chars = 0;
+int j, printed = 0, num_chars = 0;
 int flags, width, precision, size, buff_ind = 0;
-va_list args;
+va_list list;
 char buffer[BUFF_SIZE];
 
 if (format == NULL)
 return (-1);
 
-va_start(args, format);
+va_start(list, format);
 
 for (j = 0; format && format[j] != '\0'; j++)
 {
@@ -24,27 +25,27 @@ if (format[j] != '%')
 buffer[buff_ind++] = format[j];
 if (buff_ind == BUFF_SIZE)
 print_buffer(buffer, &buff_ind);
-/* write(1, &format[j], 1);*/
+/* write(1, &format[i], 1);*/
 num_chars++;
 }
 else
 {
 print_buffer(buffer, &buff_ind);
-flags = the_flags(format, &j);
-width = the_width(format, &j, args);
-precision = the_precision(format, &j, args);
-size = the_size(format, &j);
+flags = get_flags(format, &j);
+width = get_width(format, &j, list);
+precision = get_precision(format, &j, list);
+size = get_size(format, &j);
 ++j;
-num = handle_print(format, &j, args, buffer, flags, width, precision, size);
-if (num == -1)
+printed = handle_print(format, &j, list,buffer, flags, width, precision, size);
+if (printed == -1)
 return (-1);
-num_chars += num;
+num_chars += printed;
 }
 }
 
 print_buffer(buffer, &buff_ind);
 
-va_end(args);
+va_end(list);
 
 return (num_chars);
 }
@@ -61,4 +62,3 @@ write(1, &buffer[0], *buff_ind);
 
 *buff_ind = 0;
 }
-
